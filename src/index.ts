@@ -18,7 +18,8 @@ app.post(WEBHOOK_ENDPOINT, (req, res) => {
   const message = req.body.message;
   switch (message?.text) {
     case '/updateScore':
-      UpdateScore.replyWithStationOptions(stationConfigs, message);
+      UpdateScore.replyWithSelectTeamNumber(message);
+      // UpdateScore.replyWithStationOptions(stationConfigs, message);
   }
   res.status(200).send();
 });
