@@ -1,8 +1,8 @@
 import { Message } from "@grammyjs/types";
 import { StationConfig } from "../stations";
 
-export type MessageStateFnMap = Map<
-  string,
+export interface MessageStateFnMap {
+  [identifier: string]:
   {
     0: (stationConfigs: StationConfig[], message: Message) => any;
     [cycle: number]: (
@@ -11,7 +11,7 @@ export type MessageStateFnMap = Map<
       data: string
     ) => any;
   }
->;
+};
 
 export interface MessageState {
   identifier: string;

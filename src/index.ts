@@ -4,22 +4,27 @@ import { dotenvConfig } from "./env";
 import { createWebhook, WEBHOOK_ENDPOINT } from "./bot";
 import { loadStationConfigs, StationConfig } from "./stations";
 import * as UpdateScore from "./commands/update-score";
+import * as RedeemPoints from "./commands/redeem-points";
 import { MessageStateFnMap, parseMessageState } from "./bot/message-state";
 
 dotenvConfig();
 
 let stationConfigs: StationConfig[] = [];
-let messageStateFnMap: MessageStateFnMap = new Map([
-  [
-    UpdateScore.IDENTIFIER,
+let messageStateFnMap: MessageStateFnMap = {
+  [UpdateScore.IDENTIFIER]:
     {
       0: UpdateScore.replyWithSelectTeamNumber,
       1: UpdateScore.replyWithStationOptions,
       2: UpdateScore.replyWithScoreOptions,
       3: UpdateScore.updateScore,
     },
-  ],
-]);
+  [RedeemPoints.IDENTIFIER]:
+    {
+      0: RedeemPoints.replyWithSelectTeamNumber,
+      1: RedeemPoints.replyWithSelectPointsToRedeem,
+      2: RedeemPoints.redeemPoints,
+    }
+  };
 
 const app = express();
 
@@ -35,7 +40,7 @@ app.post(WEBHOOK_ENDPOINT, (req, res) => {
     if (messageState !== null) {
       const { identifier, state, data } = messageState;
 
-      const fn = messageStateFnMap.get(identifier)?.[state + 1];
+      const fn = messageStateFnMap[identifier]?.[state + 1];
       if (fn) fn(stationConfigs, callback_query.message, data);
     }
   } else if (req.body.message?.text[0] === "/") {
@@ -43,10 +48,8 @@ app.post(WEBHOOK_ENDPOINT, (req, res) => {
     // remove '/' prefix and get only first word
     const identifier = message.text.slice(1).split(" ")[0];
 
-    if (messageStateFnMap.has(identifier)) {
-      const initFn = messageStateFnMap.get(identifier)?.[0];
-      if (initFn) initFn(stationConfigs, message);
-    }
+    const initFn = messageStateFnMap[identifier]?.[0];
+    if (initFn) initFn(stationConfigs, message);
   }
   res.status(200).send();
 });
