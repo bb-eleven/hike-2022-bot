@@ -10,6 +10,7 @@ import { sheets } from "../sheets";
 import {
   createSheetsGetRequest,
   createSheetsUpdateRequest,
+  MajorDimension,
 } from "../sheets/request";
 
 export const IDENTIFIER = "redeemPoints";
@@ -48,19 +49,18 @@ export const replyWithSelectPointsToRedeem = async (
 ): Promise<any> => {
   const [teamNo] = data.split(';');
 
-  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12'))).data.values?.[0];
-  
+  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS))).data.values?.[0];
   if (!pointsVals) {
     return;
   }
 
   const [total, spent, balance] = pointsVals;
-  const len = balance % 10;
+  const len = balance / 10;
   const buttons: InlineKeyboardButton[][] = [];
+  let buttonRow: InlineKeyboardButton[] = [];
 
   for (let i = 0; i <= len; i++) {
-    let buttonRow: InlineKeyboardButton[] = [];
-    if ((i + 1) % 5 === 0) {
+    if (i > 4 && i % 5 === 0) {
       buttons.push(buttonRow);
       buttonRow = [];
     }
@@ -69,23 +69,12 @@ export const replyWithSelectPointsToRedeem = async (
       callback_data: createMessageState(IDENTIFIER, 1, `${i * 10};${data}`)
     });
   }
-
-  const selectPointsToRedeem: InlineKeyboardMarkup = {
-    inline_keyboard: [
-      Array.from({ length: 7 }, (_, i) => {
-        const teamNo = String(i + 1);
-        return {
-          text: teamNo,
-          callback_data: createMessageState(IDENTIFIER, 0, teamNo),
-        } as InlineKeyboardButton;
-      }),
-    ],
-  };
+  buttons.push(buttonRow);
 
   const body = {
     chat_id: message.chat.id,
     text: `Team ${teamNo} can spend up to ${balance} points`,
-    reply_markup: selectPointsToRedeem
+    reply_markup: { inline_keyboard: buttons }
   }
 
   return sendMethod('sendMessage', body);
@@ -105,19 +94,19 @@ export const redeemPoints = async (
     return;
   }
 
-  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12'))).data.values?.[0];
+  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS))).data.values?.[0];
   
   if (!pointsVals) {
     return;
   }
 
-  const [total, oldSpent, oldBalance] = pointsVals;
+  const [total, oldSpent, oldBalance] = pointsVals.map(x => Number(x));
 
   await sheets.spreadsheets.values.update(createSheetsUpdateRequest('Team' + teamNo + '!B11', { values: [[oldSpent + pointsRedeemed]]}));
 
   const body = {
     chat_id: message.chat.id,
-    text: `Team ${teamNo} has redeemed ${pointsRedeemed} points for $${pointsRedeemed / 10}.\n\nTotal: ${total} points\nSpent: ${oldSpent + pointsRedeemed} points\nBalance: ${oldBalance - pointsRedeemed}points`
+    text: `Team ${teamNo} has redeemed $${pointsRedeemed / 10} for ${pointsRedeemed} points.\n\nTotal: ${total} points\nSpent: ${oldSpent + pointsRedeemed} points\nBalance: ${oldBalance - pointsRedeemed} points`
   }
 
   return sendMethod('sendMessage', body);
