@@ -16,6 +16,7 @@ let messageStateFnMap: MessageStateFnMap = new Map([
       0: UpdateScore.replyWithSelectTeamNumber,
       1: UpdateScore.replyWithStationOptions,
       2: UpdateScore.replyWithScoreOptions,
+      3: UpdateScore.updateScore,
     },
   ],
 ]);

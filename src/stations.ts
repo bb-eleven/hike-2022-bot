@@ -1,5 +1,5 @@
 import { sheets } from "./sheets";
-import { createSheetsRequest } from "./sheets/request";
+import { createSheetsGetRequest } from "./sheets/request";
 
 export enum StationNames {
   UNCLE_RAYMOND_DANCE = "Uncle Raymond Dance",
@@ -11,7 +11,9 @@ export enum StationNames {
   CHECKPOINT = "Checkpoint",
 }
 
-export const STATION_CELLS = {
+export const STATION_CELLS: {
+  [stationName: string]: string;
+} = {
   [StationNames.UNCLE_RAYMOND_DANCE]: "B3",
   [StationNames.CHAPTEH]: "B4",
   [StationNames.SHOPPING_CHALLENGE]: "B5",
@@ -29,7 +31,9 @@ export interface StationConfig {
 export const loadStationConfigs = async () => {
   const stationConfigs: StationConfig[] = [];
   const stationConfigsVals = (
-    await sheets.spreadsheets.values.get(createSheetsRequest("Stations!B2:D8"))
+    await sheets.spreadsheets.values.get(
+      createSheetsGetRequest("Stations!B2:D8")
+    )
   ).data.values;
 
   Object.keys(STATION_CELLS).forEach((name, index) => {

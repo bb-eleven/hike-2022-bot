@@ -1,4 +1,4 @@
-import { StationConfig } from "../stations";
+import { StationConfig, StationNames, STATION_CELLS } from "../stations";
 import {
   InlineKeyboardMarkup,
   InlineKeyboardButton,
@@ -6,6 +6,11 @@ import {
 } from "@grammyjs/types";
 import { sendMethod } from "../bot";
 import { createMessageState } from "../bot/message-state";
+import { sheets } from "../sheets";
+import {
+  createSheetsGetRequest,
+  createSheetsUpdateRequest,
+} from "../sheets/request";
 
 export const IDENTIFIER = "updateScore";
 
@@ -93,6 +98,51 @@ export const replyWithScoreOptions = async (
     chat_id: message.chat.id,
     text: `What score will you give Team ${teamNo} for ${station.name}?`,
     reply_markup: selectStationButtons,
+  };
+
+  return sendMethod("sendMessage", body);
+};
+
+// 3
+export const updateScore = async (
+  stationConfigs: StationConfig[],
+  message: Message,
+  data: string
+): Promise<any> => {
+  const dataArr = data.split(";");
+  const teamNo = dataArr[2];
+
+  const station = stationConfigs[Number(dataArr[1])];
+  const score = Number(dataArr[0]);
+  if (!teamNo || !station || !score) {
+    return;
+  }
+
+  const range = "Team" + teamNo + "!" + STATION_CELLS[station.name];
+  let oldScore = 0;
+
+  if (station.name === StationNames.CHECKPOINT) {
+    const oldScoreVal = (
+      await sheets.spreadsheets.values.get(createSheetsGetRequest(range))
+    ).data.values?.[0][0];
+    oldScore = Number(oldScoreVal ?? 0);
+  }
+  await sheets.spreadsheets.values.update(
+    createSheetsUpdateRequest(range, { values: [[oldScore + score]] })
+  );
+
+  const updatedScore = (
+    await sheets.spreadsheets.values.get(createSheetsGetRequest(range))
+  ).data.values?.[0][0];
+  const totalScore = (
+    await sheets.spreadsheets.values.get(
+      createSheetsGetRequest("Team" + teamNo + "!B10")
+    )
+  ).data.values?.[0][0];
+
+  const body = {
+    chat_id: message.chat.id,
+    text: `Team ${teamNo}'s score for ${station.name} has been updated to ${updatedScore}. Team ${teamNo}'s total score is now ${totalScore}.`,
   };
 
   return sendMethod("sendMessage", body);
