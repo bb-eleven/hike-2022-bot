@@ -13,7 +13,8 @@ import {
   MajorDimension,
 } from "../sheets/request";
 
-export const IDENTIFIER = "redeemPoints";
+export const IDENTIFIER = "redeem_points";
+export const DESCRIPTION = "Redeem points for a team.";
 
 // 0
 export const replyWithSelectTeamNumber = async (

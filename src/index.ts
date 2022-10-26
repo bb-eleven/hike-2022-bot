@@ -1,7 +1,7 @@
 import express from "express";
 import { dotenvConfig } from "./env";
 
-import { createWebhook, WEBHOOK_ENDPOINT } from "./bot";
+import { setChatMenuButton, setCommands, setWebhook, WEBHOOK_ENDPOINT } from "./bot";
 import { loadStationConfigs, StationConfig } from "./stations";
 import * as UpdateScore from "./commands/update-score";
 import * as RedeemPoints from "./commands/redeem-points";
@@ -57,6 +57,9 @@ app.post(WEBHOOK_ENDPOINT, (req, res) => {
 app.listen(process.env.PORT, async () => {
   console.log(`server started at port ${process.env.PORT}`);
 
-  createWebhook().then(console.log);
+  setWebhook().then(console.log);
+  setCommands().then(console.log);
+  setChatMenuButton().then(console.log);
+  
   stationConfigs = await loadStationConfigs();
 });

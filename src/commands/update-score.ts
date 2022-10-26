@@ -12,7 +12,8 @@ import {
   createSheetsUpdateRequest,
 } from "../sheets/request";
 
-export const IDENTIFIER = "updateScore";
+export const IDENTIFIER = "update_score";
+export const DESCRIPTION = "Set/update a team's score for a checkpoint.";
 
 // 0
 export const replyWithSelectTeamNumber = async (
