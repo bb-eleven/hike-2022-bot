@@ -3,6 +3,7 @@ import { dotenvConfig } from './env';
 
 import { createWebhook, WEBHOOK_ENDPOINT } from './bot';
 import { loadStationConfigs, StationConfig } from './stations';
+import * as UpdateScore from './bot/update-score';
 
 dotenvConfig();
 
@@ -13,9 +14,14 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.post(WEBHOOK_ENDPOINT, (req, res) => {
-  console.log(req)
+  console.log(req.body);
+  const message = req.body.message;
+  switch (message?.text) {
+    case '/updateScore':
+      UpdateScore.replyWithStationOptions(stationConfigs, message);
+  }
+  res.status(200).send();
 });
-
 
 app.listen(process.env.PORT, async () => {
   console.log(`server started at port ${process.env.PORT}`);
