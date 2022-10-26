@@ -16,3 +16,12 @@ export const createWebhook = (): Promise<any> => {
     body: params
   }).then(res => res.json());
 }
+
+export const sendMethod = (method: string, body: {}): Promise<any> => {
+  return fetch(TELEGRAM_API_URL + method, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+    .then(res => res.json());
+}

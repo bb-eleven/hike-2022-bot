@@ -1,7 +1,6 @@
 import { StationConfig } from "../stations";
 import { InlineKeyboardMarkup, InlineKeyboardButton, Message } from '@grammyjs/types';
-import fetch from "node-fetch";
-import { TELEGRAM_API_URL } from ".";
+import { sendMethod } from ".";
 import { createMessageState } from "./message-state";
 
 export const IDENTIFIER = 'updateScore';
@@ -21,13 +20,7 @@ export const replyWithSelectTeamNumber = async (stationConfigs: StationConfig[],
     reply_markup: selectTeamKeyboard
   };
 
-  return fetch(TELEGRAM_API_URL + 'sendMessage', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  }).then(res => res.json());
+  return sendMethod('sendMessage', body);
 }
 
 // 1
@@ -47,13 +40,7 @@ export const replyWithStationOptions = async (stationConfigs: StationConfig[], m
     reply_markup: selectStationButtons
   };
 
-  return fetch(TELEGRAM_API_URL + 'sendMessage', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  }).then(res => res.json());
+  return sendMethod('sendMessage', body);
 }
 
 // 2
@@ -80,11 +67,5 @@ export const replyWithScoreOptions = async (stationConfigs: StationConfig[], mes
     reply_markup: selectStationButtons
   };
 
-  return fetch(TELEGRAM_API_URL + 'sendMessage', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  }).then(res => res.json());
+  return sendMethod('sendMessage', body);
 }
