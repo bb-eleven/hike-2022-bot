@@ -55,9 +55,11 @@ export const replyWithStationOptions = async (
     ]),
   };
 
+  const [teamNo] = data.split(';');
+
   const body = {
     chat_id: message.chat.id,
-    text: "Select a station",
+    text: `Which station do you want to give Team ${teamNo} points for?`,
     reply_markup: selectStationButtons,
   };
 
