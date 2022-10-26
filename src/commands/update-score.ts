@@ -1,7 +1,7 @@
 import { StationConfig } from "../stations";
 import { InlineKeyboardMarkup, InlineKeyboardButton, Message } from '@grammyjs/types';
-import { sendMethod } from ".";
-import { createMessageState } from "./message-state";
+import { sendMethod } from "../bot";
+import { createMessageState } from "../bot/message-state";
 
 export const IDENTIFIER = 'updateScore';
 

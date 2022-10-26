@@ -3,7 +3,7 @@ import { dotenvConfig } from './env';
 
 import { createWebhook, WEBHOOK_ENDPOINT } from './bot';
 import { loadStationConfigs, StationConfig } from './stations';
-import * as UpdateScore from './bot/update-score';
+import * as UpdateScore from './commands/update-score';
 import { MessageStateFnMap, parseMessageState } from './bot/message-state';
 
 dotenvConfig();
