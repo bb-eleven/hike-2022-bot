@@ -9,8 +9,8 @@ export interface SheetsRequest {
 }
 
 export enum MajorDimension {
-  ROWS = 'ROWS',
-  COLUMNS = 'COLUMNS',
+  ROWS = "ROWS",
+  COLUMNS = "COLUMNS",
 }
 
 export const createSheetsRequest = (
