@@ -1,20 +1,16 @@
-import { StationConfig, StationNames, STATION_CELLS } from "../stations";
-import {
-  InlineKeyboardMarkup,
-  InlineKeyboardButton,
-  Message,
-} from "@grammyjs/types";
-import { sendMethod } from "../bot";
-import { createMessageState } from "../bot/message-state";
-import { sheets } from "../sheets";
+import { StationConfig, StationNames, STATION_CELLS } from '../stations';
+import { InlineKeyboardMarkup, InlineKeyboardButton, Message } from '@grammyjs/types';
+import { sendMethod } from '../bot';
+import { createMessageState } from '../bot/message-state';
+import { sheets } from '../sheets';
 import {
   createSheetsGetRequest,
   createSheetsUpdateRequest,
   MajorDimension,
-} from "../sheets/request";
+} from '../sheets/request';
 
-export const IDENTIFIER = "redeem_points";
-export const DESCRIPTION = "Redeem points for a team.";
+export const IDENTIFIER = 'redeem_points';
+export const DESCRIPTION = 'Redeem points for a team.';
 
 // 0
 export const replyWithSelectTeamNumber = async (
@@ -35,11 +31,11 @@ export const replyWithSelectTeamNumber = async (
 
   const body = {
     chat_id: message.chat.id,
-    text: "Which team is cashing in?\n10 points = $1",
+    text: 'Which team is cashing in?\n10 points = $1',
     reply_markup: selectTeamKeyboard,
   };
 
-  return sendMethod("sendMessage", body);
+  return sendMethod('sendMessage', body);
 };
 
 // 1
@@ -50,7 +46,11 @@ export const replyWithSelectPointsToRedeem = async (
 ): Promise<any> => {
   const [teamNo] = data.split(';');
 
-  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS))).data.values?.[0];
+  const pointsVals = (
+    await sheets.spreadsheets.values.get(
+      createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS)
+    )
+  ).data.values?.[0];
   if (!pointsVals) {
     return;
   }
@@ -67,7 +67,7 @@ export const replyWithSelectPointsToRedeem = async (
     }
     buttonRow.push({
       text: String(i * 10),
-      callback_data: createMessageState(IDENTIFIER, 1, `${i * 10};${data}`)
+      callback_data: createMessageState(IDENTIFIER, 1, `${i * 10};${data}`),
     });
   }
   buttons.push(buttonRow);
@@ -75,11 +75,11 @@ export const replyWithSelectPointsToRedeem = async (
   const body = {
     chat_id: message.chat.id,
     text: `Team ${teamNo} can spend up to ${balance} points`,
-    reply_markup: { inline_keyboard: buttons }
-  }
+    reply_markup: { inline_keyboard: buttons },
+  };
 
   return sendMethod('sendMessage', body);
-}
+};
 
 // 2
 export const redeemPoints = async (
@@ -95,21 +95,30 @@ export const redeemPoints = async (
     return;
   }
 
-  const pointsVals = (await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS))).data.values?.[0];
-  
+  const pointsVals = (
+    await sheets.spreadsheets.values.get(
+      createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS)
+    )
+  ).data.values?.[0];
+
   if (!pointsVals) {
     return;
   }
 
-  const [total, oldSpent, oldBalance] = pointsVals.map(x => Number(x));
+  const [total, oldSpent, oldBalance] = pointsVals.map((x) => Number(x));
 
-  await sheets.spreadsheets.values.update(createSheetsUpdateRequest('Team' + teamNo + '!B11', { values: [[oldSpent + pointsRedeemed]]}));
+  await sheets.spreadsheets.values.update(
+    createSheetsUpdateRequest('Team' + teamNo + '!B11', { values: [[oldSpent + pointsRedeemed]] })
+  );
 
   const body = {
     chat_id: message.chat.id,
-    text: `Team ${teamNo} has redeemed $${pointsRedeemed / 10} for ${pointsRedeemed} points.\n\nTotal: ${total} points\nSpent: ${oldSpent + pointsRedeemed} points\nBalance: ${oldBalance - pointsRedeemed} points`
-  }
+    text: `Team ${teamNo} has redeemed $${
+      pointsRedeemed / 10
+    } for ${pointsRedeemed} points.\n\nTotal: ${total} points\nSpent: ${
+      oldSpent + pointsRedeemed
+    } points\nBalance: ${oldBalance - pointsRedeemed} points`,
+  };
 
   return sendMethod('sendMessage', body);
-}
-
+};

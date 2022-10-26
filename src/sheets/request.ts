@@ -1,4 +1,4 @@
-import { dotenvConfig } from "../env";
+import { dotenvConfig } from '../env';
 
 dotenvConfig();
 
@@ -11,8 +11,8 @@ export interface SheetsRequest {
 }
 
 export enum MajorDimension {
-  ROWS = "ROWS",
-  COLUMNS = "COLUMNS",
+  ROWS = 'ROWS',
+  COLUMNS = 'COLUMNS',
 }
 
 export const createSheetsGetRequest = (
@@ -31,5 +31,5 @@ export const createSheetsUpdateRequest = (
   spreadsheetId: process.env.SHEET_ID as string,
   range,
   requestBody,
-  valueInputOption: "USER_ENTERED",
+  valueInputOption: 'USER_ENTERED',
 });

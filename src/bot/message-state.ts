@@ -1,17 +1,12 @@
-import { Message } from "@grammyjs/types";
-import { StationConfig } from "../stations";
+import { Message } from '@grammyjs/types';
+import { StationConfig } from '../stations';
 
 export interface MessageStateFnMap {
-  [identifier: string]:
-  {
+  [identifier: string]: {
     0: (stationConfigs: StationConfig[], message: Message) => any;
-    [cycle: number]: (
-      stationConfigs: StationConfig[],
-      message: Message,
-      data: string
-    ) => any;
-  }
-};
+    [cycle: number]: (stationConfigs: StationConfig[], message: Message, data: string) => any;
+  };
+}
 
 export interface MessageState {
   identifier: string;
@@ -19,16 +14,12 @@ export interface MessageState {
   data: string;
 }
 
-export const createMessageState = (
-  identifier: string,
-  state: number,
-  data: string
-): string => {
+export const createMessageState = (identifier: string, state: number, data: string): string => {
   return `${identifier},${state},${data}`;
 };
 
 export const parseMessageState = (text: string): MessageState | null => {
-  const stateArr = text.split(",");
+  const stateArr = text.split(',');
   if (!stateArr || stateArr.length !== 3) {
     return null;
   }

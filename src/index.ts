@@ -1,30 +1,28 @@
-import express from "express";
-import { dotenvConfig } from "./env";
+import express from 'express';
+import { dotenvConfig } from './env';
 
-import { setChatMenuButton, setCommands, setWebhook, WEBHOOK_ENDPOINT } from "./bot";
-import { loadStationConfigs, StationConfig } from "./stations";
-import * as UpdateScore from "./commands/update-score";
-import * as RedeemPoints from "./commands/redeem-points";
-import { MessageStateFnMap, parseMessageState } from "./bot/message-state";
+import { setChatMenuButton, setCommands, setWebhook, WEBHOOK_ENDPOINT } from './bot';
+import { loadStationConfigs, StationConfig } from './stations';
+import * as UpdateScore from './commands/update-score';
+import * as RedeemPoints from './commands/redeem-points';
+import { MessageStateFnMap, parseMessageState } from './bot/message-state';
 
 dotenvConfig();
 
 let stationConfigs: StationConfig[] = [];
 let messageStateFnMap: MessageStateFnMap = {
-  [UpdateScore.IDENTIFIER]:
-    {
-      0: UpdateScore.replyWithSelectTeamNumber,
-      1: UpdateScore.replyWithStationOptions,
-      2: UpdateScore.replyWithScoreOptions,
-      3: UpdateScore.updateScore,
-    },
-  [RedeemPoints.IDENTIFIER]:
-    {
-      0: RedeemPoints.replyWithSelectTeamNumber,
-      1: RedeemPoints.replyWithSelectPointsToRedeem,
-      2: RedeemPoints.redeemPoints,
-    }
-  };
+  [UpdateScore.IDENTIFIER]: {
+    0: UpdateScore.replyWithSelectTeamNumber,
+    1: UpdateScore.replyWithStationOptions,
+    2: UpdateScore.replyWithScoreOptions,
+    3: UpdateScore.updateScore,
+  },
+  [RedeemPoints.IDENTIFIER]: {
+    0: RedeemPoints.replyWithSelectTeamNumber,
+    1: RedeemPoints.replyWithSelectPointsToRedeem,
+    2: RedeemPoints.redeemPoints,
+  },
+};
 
 const app = express();
 
@@ -43,10 +41,10 @@ app.post(WEBHOOK_ENDPOINT, (req, res) => {
       const fn = messageStateFnMap[identifier]?.[state + 1];
       if (fn) fn(stationConfigs, callback_query.message, data);
     }
-  } else if (req.body.message?.text[0] === "/") {
+  } else if (req.body.message?.text[0] === '/') {
     const message = req.body.message;
     // remove '/' prefix and get only first word
-    const identifier = message.text.slice(1).split(" ")[0];
+    const identifier = message.text.slice(1).split(' ')[0];
 
     const initFn = messageStateFnMap[identifier]?.[0];
     if (initFn) initFn(stationConfigs, message);
@@ -60,6 +58,6 @@ app.listen(process.env.PORT, async () => {
   setWebhook().then(console.log);
   setCommands().then(console.log);
   setChatMenuButton().then(console.log);
-  
+
   stationConfigs = await loadStationConfigs();
 });
