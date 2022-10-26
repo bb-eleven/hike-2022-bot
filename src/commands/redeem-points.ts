@@ -12,7 +12,7 @@ import {
   createSheetsUpdateRequest,
 } from "../sheets/request";
 
-export const IDENTIFIER = "spendPoints";
+export const IDENTIFIER = "redeemPoints";
 
 // 0
 export const replyWithSelectTeamNumber = async (
@@ -33,7 +33,7 @@ export const replyWithSelectTeamNumber = async (
 
   const body = {
     chat_id: message.chat.id,
-    text: "Which team is ca$hing in? 10 points = $1",
+    text: "Which team is cashing in?\n10 points = $1",
     reply_markup: selectTeamKeyboard,
   };
 
