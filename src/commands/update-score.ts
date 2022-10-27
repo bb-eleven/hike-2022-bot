@@ -113,7 +113,7 @@ export const updateScore = async (
   const range = 'Team' + teamNo + '!' + STATION_CELLS[station.name];
   let oldScore = 0;
 
-  if (station.name === StationNames.CHECKPOINT) {
+  if (station.name === StationNames.CHECKPOINT || station.name === StationNames.PLACE_BINGO) {
     const oldScoreVal = (await sheets.spreadsheets.values.get(createSheetsGetRequest(range))).data
       .values?.[0][0];
     oldScore = Number(oldScoreVal ?? 0);
@@ -125,7 +125,7 @@ export const updateScore = async (
   const updatedScore = (await sheets.spreadsheets.values.get(createSheetsGetRequest(range))).data
     .values?.[0][0];
   const totalScore = (
-    await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!B10'))
+    await sheets.spreadsheets.values.get(createSheetsGetRequest('Team' + teamNo + '!F3'))
   ).data.values?.[0][0];
 
   const body = {

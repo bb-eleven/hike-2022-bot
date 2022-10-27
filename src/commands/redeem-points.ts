@@ -48,7 +48,7 @@ export const replyWithSelectPointsToRedeem = async (
 
   const pointsVals = (
     await sheets.spreadsheets.values.get(
-      createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS)
+      createSheetsGetRequest('Team' + teamNo + '!F3:F5', MajorDimension.COLUMNS)
     )
   ).data.values?.[0];
   if (!pointsVals) {
@@ -97,7 +97,7 @@ export const redeemPoints = async (
 
   const pointsVals = (
     await sheets.spreadsheets.values.get(
-      createSheetsGetRequest('Team' + teamNo + '!B10:B12', MajorDimension.COLUMNS)
+      createSheetsGetRequest('Team' + teamNo + '!F3:F5', MajorDimension.COLUMNS)
     )
   ).data.values?.[0];
 
@@ -108,7 +108,7 @@ export const redeemPoints = async (
   const [total, oldSpent, oldBalance] = pointsVals.map((x) => Number(x));
 
   await sheets.spreadsheets.values.update(
-    createSheetsUpdateRequest('Team' + teamNo + '!B11', { values: [[oldSpent + pointsRedeemed]] })
+    createSheetsUpdateRequest('Team' + teamNo + '!F4', { values: [[oldSpent + pointsRedeemed]] })
   );
 
   const body = {

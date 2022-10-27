@@ -7,8 +7,9 @@ export enum StationNames {
   SHOPPING_CHALLENGE = 'Mystery Item Shopping Challenge',
   TRASH_CLEANING = 'Trash Cleaning',
   MATHS_QUIZ = 'Maths Quiz',
-  FLAG = 'Flag',
+  PLACE_BINGO = 'Place bingo',
   CHECKPOINT = 'Checkpoint',
+  FLAG = 'Flag',
 }
 
 export const STATION_CELLS: {
@@ -19,8 +20,9 @@ export const STATION_CELLS: {
   [StationNames.SHOPPING_CHALLENGE]: 'B5',
   [StationNames.TRASH_CLEANING]: 'B6',
   [StationNames.MATHS_QUIZ]: 'B7',
-  [StationNames.FLAG]: 'B8',
+  [StationNames.PLACE_BINGO]: 'B8',
   [StationNames.CHECKPOINT]: 'B9',
+  [StationNames.FLAG]: 'B10',
 };
 
 export interface StationConfig {
@@ -31,7 +33,7 @@ export interface StationConfig {
 export const loadStationConfigs = async () => {
   const stationConfigs: StationConfig[] = [];
   const stationConfigsVals = (
-    await sheets.spreadsheets.values.get(createSheetsGetRequest('Stations!B2:D8'))
+    await sheets.spreadsheets.values.get(createSheetsGetRequest('Stations!B2:D9'))
   ).data.values;
 
   Object.keys(STATION_CELLS).forEach((name, index) => {
