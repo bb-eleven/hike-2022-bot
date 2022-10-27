@@ -56,6 +56,16 @@ export const replyWithSelectPointsToRedeem = async (
   }
 
   const [total, spent, balance] = pointsVals;
+
+  if (balance < 10) {
+    const body = {
+      chat_id: message.chat.id,
+      text: `Team ${teamNo} is too poor to redeem anything!`,
+    };
+
+    return sendMethod('sendMessage', body);
+  }
+
   const len = balance / 10;
   const buttons: InlineKeyboardButton[][] = [];
   let buttonRow: InlineKeyboardButton[] = [];
@@ -91,7 +101,7 @@ export const redeemPoints = async (
   const teamNo = dataArr[1];
   const pointsRedeemed = Number(dataArr[0]);
 
-  if (!teamNo || !pointsRedeemed) {
+  if (!teamNo || typeof pointsRedeemed === 'undefined') {
     return;
   }
 
