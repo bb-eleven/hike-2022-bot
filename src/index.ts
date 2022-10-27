@@ -5,6 +5,7 @@ import { setChatMenuButton, setCommands, setWebhook, WEBHOOK_ENDPOINT } from './
 import { loadStationConfigs, StationConfig } from './stations';
 import * as UpdateScore from './commands/update-score';
 import * as RedeemPoints from './commands/redeem-points';
+import * as Leaderboards from './commands/leaderboards';
 import { MessageStateFnMap, parseMessageState } from './bot/message-state';
 
 dotenvConfig();
@@ -22,6 +23,9 @@ let messageStateFnMap: MessageStateFnMap = {
     1: RedeemPoints.replyWithSelectPointsToRedeem,
     2: RedeemPoints.redeemPoints,
   },
+  [Leaderboards.IDENTIFIER]: {
+    0: Leaderboards.getLeaderboards,
+  }
 };
 
 const app = express();

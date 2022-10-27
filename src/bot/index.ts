@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import * as UpdateScore from '../commands/update-score';
 import * as RedeemPoints from '../commands/redeem-points';
+import * as Leaderboards from '../commands/leaderboards';
 import { dotenvConfig } from '../env';
 
 dotenvConfig();
@@ -26,6 +27,10 @@ export const setCommands = (): Promise<any> => {
       command: RedeemPoints.IDENTIFIER,
       description: RedeemPoints.DESCRIPTION,
     },
+    {
+      command: Leaderboards.IDENTIFIER,
+      description: Leaderboards.DESCRIPTION
+    }
   ];
   const body = { commands };
   return sendMethod('setMyCommands', body);
