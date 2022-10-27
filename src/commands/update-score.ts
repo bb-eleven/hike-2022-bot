@@ -15,8 +15,8 @@ export const replyWithSelectTeamNumber = async (
 ): Promise<any> => {
   const selectTeamKeyboard: InlineKeyboardMarkup = {
     inline_keyboard: [
-      Array.from({ length: 7 }, (_, i) => {
-        const teamNo = String(i + 1);
+      Array.from({ length: 8 }, (_, i) => {
+        const teamNo = String(i);
         return {
           text: teamNo,
           callback_data: createMessageState(IDENTIFIER, 0, teamNo),
